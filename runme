@@ -1,0 +1,46 @@
+#! /bin/bash
+cd /usr/local/instrumentacion/Mezcal2014/
+echo "Mezcal Instrument Star Up scrip ............"
+
+
+./unload.py ./ds9 -title Mezcal >>/dev/null
+./unload.py ./bin/ds9 -title Mezcal >>/dev/null
+
+./unload.py python ./mezcal.py        >>/dev/null
+
+./unload.py /bin/csh -f /tmp/start_iraf_observa.devmezcal0
+#la forma nueva
+./unload.py ds9 -port 5139 -title Mezcal
+./unload.py xgterm -sbr -fn 9x15 -sl 400 -cr red -title IRAF_MEZCAL -e cl
+
+#/tmp/start_iraf_observa.devmezcal0
+
+#./unload2.tcl start_iraf_observa.devmarconi0 >>/dev/null
+#./unload2.tcl start_iraf_observa.devmarconi1 >>/dev/null
+#./unload2.tcl start_iraf_observa.devmarconi3 >>/dev/null
+
+#tambien los subproceso
+#/bin/bash /tmp/kill_list.lst
+
+#sleep 1
+./xmezcalds9iraf >>/dev/null
+
+source /tmp/marconi.kk
+#para que levante ds9
+sleep 1
+./mezcal.py
+
+
+#limpiar todo
+./unload.py python ./mezcal.py        >>/dev/null
+./unload.py ./ds9 -title Mezcal >>/dev/null
+./unload.py ./bin/ds9 -title Mezcal >>/dev/null
+./unload.py /bin/csh -f /tmp/start_iraf_observa.devmezcal0
+
+#la forma nueva
+./unload.py ds9 -port 5139 -title Mezcal
+./unload.py xgterm -sbr -fn 9x15 -sl 400 -cr red -title IRAF_MEZCAL -e cl
+
+echo "cargando nuevos parametros ........ "
+source /tmp/marconi.kk
+echo "END Mezcal ......................."

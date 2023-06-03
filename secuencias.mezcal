@@ -1,0 +1,242 @@
+nombre arc200-150
+  saveima
+  tint 200000
+  slit 1
+  mirror out
+  diffuser in
+  lamp arc
+  posmot
+  shutter open
+  expon
+  delay 200000
+  shutter close
+  lamp off
+  diffuser out
+  posmot
+fin
+
+nombre arc200-70
+  saveima
+  tint 200000
+  slit 0
+  mirror out
+  diffuser in
+  lamp arc
+  posmot
+  shutter open
+  expon
+  delay 200000
+  shutter close
+  lamp off
+  diffuser out
+  posmot
+fin
+
+nombre arc300-70
+  saveima
+  tint 300000
+  slit 0
+  mirror out
+  diffuser in
+  lamp arc
+  posmot
+  shutter open
+  expon
+  delay 300000
+  shutter close
+  lamp off
+  diffuser out
+  posmot
+fin
+
+nombre five_bias
+  saveima
+  tint 0
+  shutter close
+  loop 5
+    expon
+  endloop
+fin
+
+nombre focus
+  loop 20
+    shutter open
+    expon
+    shutter close
+  endloop
+fin
+
+nombre slit_image_150
+  saveima
+  tint 100000
+  slit 1
+  mirror in
+  posmot
+  shutter open
+  expon
+  delay 60000
+  shutter close
+  slit 2 
+  posmot
+  shutter open
+  delay 20000
+  shutter close
+  mirror out 
+  posmot
+fin  
+
+
+nombre slit_image_150_short
+  saveima
+  tint 50000
+  slit 1
+  mirror in
+  posmot
+  shutter open
+  expon
+  delay 30000
+  shutter close
+  slit 2 
+  posmot
+  shutter open
+  delay 15000
+  shutter close
+  mirror out 
+  posmot
+fin  
+
+nombre slit_image_70
+  saveima
+  tint 100000
+  slit 0
+  mirror in
+  posmot
+  shutter open
+  expon
+  delay 60000
+  shutter close
+  slit 2 
+  posmot
+  shutter open
+  delay 20000
+  shutter close
+  mirror out 
+  posmot
+fin  
+
+nombre image_slit_150
+  saveima
+  tint 100000
+  slit 2
+  mirror in
+  posmot
+  shutter open
+  expon
+  delay 20000
+  shutter close
+  slit 1 
+  posmot
+  shutter open
+  delay 60000
+  shutter close
+  mirror out 
+  posmot
+fin  
+
+nombre image_slit_70
+  saveima
+  tint 100000
+  slit 2
+  mirror in
+  posmot
+  shutter open
+  expon
+  delay 20000
+  shutter close
+  slit 0
+  posmot
+  shutter open
+  delay 60000
+  shutter close
+  mirror out 
+  posmot
+fin  
+
+nombre image_slit_70_long
+  saveima
+  tint 140000
+  slit 2
+  mirror in
+  posmot
+  shutter open
+  expon
+  delay 70000
+  shutter close
+  slit 0
+  posmot
+  shutter open
+  delay 60000
+  shutter close
+  mirror out 
+  posmot
+fin  
+
+nombre image_slit_70_verylong
+  saveima
+  tint 200000
+  slit 2
+  mirror in
+  posmot
+  shutter open
+  expon
+  delay 70000
+  shutter close
+  slit 0
+  posmot
+  shutter open
+  delay 120000
+  shutter close
+  mirror out 
+  posmot
+fin
+
+nombre expose
+  shutter open
+  expon
+  shutter close
+fin
+
+
+nombre tungsten300_slit150
+  saveima
+  tint 300000
+  slit 1
+  mirror out
+  diffuser in
+  lamp tun
+  posmot
+  shutter open
+  expon
+  delay 300000
+  shutter close
+  lamp off
+  diffuser out
+  posmot
+fin
+
+nombre tungsten400_slit70
+  saveima
+  tint 400000
+  slit 0
+  mirror out
+  diffuser in
+  lamp tun
+  posmot
+  shutter open
+  expon
+  delay 400000
+  shutter close
+  lamp off
+  diffuser out
+  posmot
+fin

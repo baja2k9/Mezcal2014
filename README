@@ -1,0 +1,12 @@
+ocupa liga de las librerias del oan_ccds
+ln -s ../oan_ccds/libs/ .
+
+para checar error de angulo de platina
+
+arc Tan dy/dx o sea ddec/dar
+
+
+Enfocado default a 2624 -2626
+CO+ 2500
+
+

@@ -1,0 +1,189 @@
+
+
+:A10;		Pide estado
+:A11;		Detiene el movimiento de la rueda de 5pos
+:A12;		Inicializa la rueda de 5pos
+:A13000N;	Mueve la rueda de 5pos, a la posicion N
+
+:A20;		Pide estado
+:A21;		Detiene el movimiento de la rueda de 3pos
+:A22;		Inicializa la rueda de 3pos
+:A23000N;	Mueve la rueda de 3pos, a la posicion N
+
+:A30;		Pide estado
+:A31;		Detiene el movimiento de la rueda de 4pos
+:A32;		Inicializa la rueda de 4pos
+:A33000N;	Mueve la rueda de 4pos, a la posicion N
+
+:A40;		Pide estado
+:A41;		Detiene el movimiento de eje de foco
+:A43mnop;	Mueve el eje de foco a la posicion mnop (en hexadecimal mayuscula)
+:A44;		Mueve el eje de foco en JOG a la derecha
+:A45;		Mueve el eje de foco en JOG a la izquierda
+
+:A50;		Pide estado
+:A51;		Detiene el movimiento de eje de rejilla
+:A52;		Inicializa el eje de rejilla
+:A53mnop;	Mueve el eje de rejilla a la posicion mnop (en hexadecimal mayuscula)
+:A54;		Mueve el eje de rejilla en JOG a la derecha
+:A55;		Mueve el eje de rejilla en JOG a la izquierda
+
+:A60;		Pide estado
+:A61;		Obturador OFF y remoto en REMOTO
+:A620000;	Obturador ON  y remoto en LOCAL
+:A620001;	Obturador OFF y remoto en LOCAL
+:A620011;	Obturador OFF y remoto en REMOTO
+
+:A70;		Pide estado
+:A71;		Apaga lamparas, mete difusor y espejo
+:A72mnpq;	Controla lamparas
+		m=0 lampara_1 ON m=1 lampara_1 OFF
+		n=0 lampara_2 ON n=1 lampara_2 OFF
+		p=0 saca_espejo  p=1 mete_espejo
+		q=0 mete_difusor q=1 saca_difusor
+
+
+
+
+
+
+; RECORDATORIO DE LOS MANDOS
+;[Add][Eje][OpCode][d3][d2][d1][d0][;]
+
+;[Eje]
+; [1] RUEDA DE FILTROS DE GINEBRA (5 POSICIONES)
+; [2] LINEA DE FILTROS DE GINEBRA (3 POSICIONES)
+; [3] LINEA DE FILTROS DE GINEBRA (4 POSICIONES)
+; [4] FOCO(POT)
+; [5] REJILLA(ENCODER)
+; [6] Obturador(Habilita y Activa)
+; [7] Otros (Lamparas, Espejo y Difusor)
+; 
+;[OpCode]
+;[0]	MANDA ESTADO
+;[1]	ALTO
+;[2]	INI
+;[3]	Mueve a ....
+;[4]	Jog derecha	(*)
+;[5]	Jog izuierda	(*)
+;(*)	Solo eje 4 y 5
+;[1]	Desactiva Bits	(**)
+;[2]	Controla Bits	(**)
+;(**)	Solo eje 6 y 7
+
+; Eje 1,2,3.Asignacion de Bits
+;[d3]	No importa
+;[d2]	No importa
+;[d1]	No importa
+;[d0]	Posicion
+; Eje 4,5.Asignacion de Bits
+;[d3]	Dato MSB (Posicion)
+;[d2]	Dato (Posicion)
+;[d1]	Dato (Posicion)
+;[d0]	Dato LSB (Posicion)
+; Eje 6.Asignacion de Bits
+;[d3]	No importa
+;[d2]	No importa
+;[d1]	Controla Enable (0-Activa)
+;[d0]	Controla Obturadora (0-Activa)
+; Eje 7.Asignacion de Bits
+;[d3]	Lampara 1 (0-Encendida)
+;[d2]	Lampara 2 (0-Encendida)
+;[d1]	Espejo (1-Dentro, 0-Fuera)
+;[d0]	Difusor (1-Dentro, 0-Fuera)
+
+; RECORDATORIO DE LOS MANDOS
+;[Add][Eje][OpCode][d3][d2][d1][d0][;]
+
+;[Eje]
+; [1] RUEDA DE FILTROS DE GINEBRA (5 POSICIONES)
+; [2] LINEA DE FILTROS DE GINEBRA (3 POSICIONES)
+; [3] LINEA DE FILTROS DE GINEBRA (4 POSICIONES)
+; [4] FOCO(POT)
+; [5] REJILLA(ENCODER)
+; [6] Obturador(Habilita y Activa)
+; [7] Otros (Lamparas, Espejo y Difusor)
+; 
+;[OpCode]
+;[0]	MANDA ESTADO
+;[1]	ALTO
+;[2]	INI
+;[3]	Mueve a ....
+;[4]	Jog derecha	(*)
+;[5]	Jog izuierda	(*)
+;(*)	Solo eje 4 y 5
+;[1]	Desactiva Bits	(**)
+;[2]	Controla Bits	(**)
+;(**)	Solo eje 6 y 7
+
+; Eje 1,2,3.Asignacion de Bits
+;[d3]	No importa
+;[d2]	No importa
+;[d1]	No importa
+;[d0]	Posicion
+; Eje 4,5.Asignacion de Bits
+;[d3]	Dato MSB (Posicion)
+;[d2]	Dato (Posicion)
+;[d1]	Dato (Posicion)
+;[d0]	Dato LSB (Posicion)
+; Eje 6.Asignacion de Bits
+;[d3]	No importa
+;[d2]	No importa
+;[d1]	Controla Enable (0-Activa)
+;[d0]	Controla Obturadora (0-Activa)
+; Eje 7.Asignacion de Bits
+;[d3]	Lampara 1 (0-Encendida)
+;[d2]	Lampara 2 (0-Encendida)
+;[d1]	Espejo (1-Dentro, 0-Fuera)
+;[d0]	Difusor (1-Dentro, 0-Fuera)
+
+; mando de retorno (estado del sistema)
+;[A][0][a3][a2][a1][a0][-][b2][b1][b0][-][c3][c2][c1][-][d4][d3][d2][d1][d0][;]
+
+
+;[a3][a2][a1][a0]	Posicion de Eje 5
+;[b2][b1][b0]		Posicion de Eje 4
+;[c3]			Posicion de Gin 3 [1,4]
+;[c2]			Posicion de Gin 2 [1,3]
+;[c1]			Posicion de Gin 1 [1,5]
+
+; [d4]	
+; 	[bit3]	Leva1
+; 	[bit2]	Ind1
+; 	[bit1]	Leva2
+; 	[bit0]	Ind2
+; [d3]
+; 	[bit3]	Leva3
+; 	[bit2]	Ind3
+; 	[bit1]	Sup4
+; 	[bit0]	Inf4
+; [d3]
+; 	[bit3]	Sup5
+; 	[bit2]	Inf5
+; 	[bit1]	Seguro
+; 	[bit0]	Obt
+; [d1]
+; 	[bit3]	E_Obt
+; 	[bit2]	Esp_Dentro
+; 	[bit1]	Esp_Fuera
+; 	[bit0]	Dif_Dentro
+; [d0]
+; 	[bit3]	Dif_Fuera
+; 	[bit2]	Lamp1
+; 	[bit1]	Lamp2
+; 	[bit0]	Spare
+
+
+; 		Sw-Lim		Sw-Lim		Sw-Opcional
+; EJE 1 	Leva(Prox)	Indice(sw)
+; EJE 2 	Leva(Prox)	Indice(Prox)
+; EJE 3 	Leva(Prox)	Indice(Prox)
+; EJE 4 	Inf(sw)		Sup(sw)		
+; EJE 5 	Inf(sw)		Sup(sw)		Seguro(sw)
+; OBTURADOR 	None		None
+; HAB OBT 	None		None
+; ESPEJO 	Dentro(sw)	Fuera(sw)
+; DIFUSOR 	Dentro(sw)	Fuera(sw)
+; LAMP 1	NONE		None
+; LAMP 2	None		None
+

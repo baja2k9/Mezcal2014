@@ -1,0 +1,5 @@
+#!/bin/bash
+export IMTDEV=inet:5139
+ds9 -port 5139 -title Mezcal &
+xgterm -sbr -fn 9x15 -sl 400 -cr red -title IRAF_MEZCAL -e cl &
+
