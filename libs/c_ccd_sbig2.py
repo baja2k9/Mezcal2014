@@ -38,10 +38,9 @@ class SBIG2(CLIENTE,CCD):
     def __init__(self):
         CCD.__init__(self)
         self.datatype='fits'
-        #self.ip="localhost"
-        #self.ip="192.168.3.95" #electronica ENS
-        self.ip = "192.168.1.143"
-        self.puerto=9777+1
+        self.ip="localhost"
+        #self.ip="192.168.0.127" #electronica ENS
+        self.puerto=9777
         self.usuario="sbig"	#para el debug de la clase cliente
          #V2
         self.tipo="sbig"

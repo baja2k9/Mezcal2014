@@ -1,36 +1,54 @@
 #!/usr/bin/env python
 
-from  c_util import *
+#V1.1 E. Colorado, Jun-2011 >Varios bug arreglados
+#V1.2 E. Colorado, Nov-2011 -> Arregle formato DEC para header
+#V1.3 E. Colorado, Ene-2012 -> Use zfil lpara  formato DEC
+#V1.3 OJO REDIRECCIONE TRAFICO A PROGRAMA INTERMEDIO
+from  c_telescopio import *
 
-import time
-import sys
-sys.path.append("libs")
-from c_cliente import *
-#V0.2 E. Colorado, Nov-2011 -> Arregle formato DEC para header
-#V0.3 E. Colorado, Ene-2012 -> Use zfil lpara  formato DEC
 ###########################################################
-class TELESCOPIO(UTIL,CLIENTE):
+class TELESCOPIO2M(TELESCOPIO):
     'Pide estado de los telescopios en SPM'
-    ar=0
-    gar=0
-    sar=0
-    dec=0
-    sdec=0
-    ah_dec=0
-    dec_dec=0
-    ah=0
-    edotel="/usr/local/instrumentacion/bin/edotel localhost 4958 2> /tmp/null"
 
-    def __init__(self):
-        self.timeout=1
-###########################################################
+    def __init__(self,variables=None):
+        self.mis_variables = variables
+        #self.edotel="/usr/local/instrumentacion/bin/edotel 192.168.0.13 4950 2> /tmp/null"
+        #self.ip='192.168.0.13'
+        self.ip='192.168.0.2'
+        self.puerto=4950
+        self.usuario="Tel. 2.12m"
+        #self.set_timeout = 1
+
+    ###########################################################
     def lee_coordenadas(self):
+        for i in range(1, 3):
+            #print "leyendo coor de tel 2m..., intento",i
+            x=self.lee_coordenadas_una()
+            if x==True:
+                self.info()
+                break
+            else:
+                rx="NO pude leer las coordenadas del TEL 2m"
+                #print rx
+                #self.mis_variables.mensajes(rx, "Log", "rojo")
+        return x
+
+###########################################################
+    def lee_coordenadas_una(self):
         #print self.edotel
         rx=0
         try:
-            rx=self.ejecuta(self.edotel)
+            data, status = self.manda("TEL")
         except:
             return False
+
+        if not status:
+            print "bad"
+            print data
+            return False
+        #print "recibi",data
+        rx=data
+
         #print "rx=", rx
         if rx==0:
             print "error"
@@ -48,6 +66,10 @@ class TELESCOPIO(UTIL,CLIENTE):
                 coords= x
                 data_ok=True
                 #print "AR OK"
+                break
+            #else :
+                #print "AR llego mal",datos
+                
 
         #print "datos=", data_ok
         if not data_ok: return False
@@ -65,6 +87,7 @@ class TELESCOPIO(UTIL,CLIENTE):
         self.ar_dec= abs(self.gar)+abs(self.mar/60.0)+abs(self.sar/3600.0)
 
         self.dec=coords[19:28]
+        #print "dec",self.dec
         self.signo_dec=coords[19]
         self.gdec=int(coords[20:22])
 
@@ -72,6 +95,7 @@ class TELESCOPIO(UTIL,CLIENTE):
         self.sdec=float(coords[26:28])
 
         self.dec=self.signo_dec+  str(self.gdec)+":"+str(self.mdec).zfill(2)+":"+str(self.sdec)
+        #print self.dec
 
         if self.signo_dec=="-":
             signo=-1
@@ -80,11 +104,11 @@ class TELESCOPIO(UTIL,CLIENTE):
         self.dec_dec=(abs(self.gdec)+abs(self.mdec/60.0)+abs(self.sdec/3600.0))*signo
 
         #ah
-        self.ah=coords[32:43]
-        self.signo_ah=coords[32]
-        self.hah=int(coords[33:35])
-        self.mah=int(coords[36:38])
-        self.sah=float(coords[39:43])
+        self.ah=coords[32:44]
+        self.signo_ah=coords[33]
+        self.hah=int(coords[34:36])
+        self.mah=int(coords[37:39])
+        self.sah=float(coords[40:44])
 
         #print "My AH %d %d %2.1f" %  (self.hah , self.mah , self.sah)
 
@@ -96,61 +120,28 @@ class TELESCOPIO(UTIL,CLIENTE):
 
         return True
 ###########################################################
-    def info(self):
-        print "ar:", self.ar
-        #print "ar segundos:", self.ar_sec
-        #print "ar decimal:", self.ar_dec
-        print "dec: %s, (decimal=%2.2f)" % (self.dec,self.dec_dec)
-        print "ah: %s, (decimal=%2.2f)" % (self.ah,self.ah_dec)
-
-
-###########################################################
-    def cenit(self,espera=False):
-        print "vamonos al cenit"
-        data,status=self.manda("CENIT")
-        if not status:
-            print "bad"
-            print data
-            return -1
-
-        if espera==False:
-            return 0
-        #esperar al cenit
-        mydec= 31.0288888889
-        min=mydec*0.98
-        max=mydec*1.02
-        print "dec, min=%d max=%d"%(min,max)
-
-
-        loop=1
-        loop_dec=1
-        loop_ah=1
-        while loop:
-            time.sleep(0.5)
-            self.lee_coordenadas()
-            if self.ah_dec>=-0.1 and self.ah_dec<=0.11: loop_ah=0
-            if self.dec_dec>=min and self.ah_dec<=max: loop_dec=0
-            loop=loop_dec or loop_ar
-            print "loop",loop,"loop dec",loop_dec,"loop_ah",loop_ah
-
-        print "ya practicamente estoy en el cenit..."
-        return 1
-
 ###########################################################
     def dec_offset(self,offset):
-	print "Movinedo offset dec",offset
-	mando="DECOF %f +D"%offset
-	data,status=self.manda(mando)
+        print "************ RUTINA Telescopio 2m ***********************"
+        print "Movinedo offset dec",offset
+        mando="AR_OF 0 DEC_OF %6.2f RELAD\r\n "%offset
+        data,status=self.manda(mando)
         if not status:
             print "bad"
             print data
             return -1
 ###########################################################
     def ar_offset(self,offset):
-	print "Movinedo offset ar",offset
-	mando="AROF %f +A"%offset
-	data,status=self.manda(mando)
+        print "Movinedo offset ar",offset
+        mando="AR_OF %6.2f DEC_OF 0 RELAD\r\n"%offset
+        data,status=self.manda(mando)
         if not status:
             print "bad"
             print data
             return -1
+
+'''
+a=TELESCOPIO2M()
+a.lee_coordenadas()
+a.info()
+'''

@@ -102,7 +102,6 @@ class TELESCOPIO84(UTIL,CLIENTE):
             else:
                 signo=1
             self.dec_dec=(abs(self.gdec)+abs(self.mdec/60.0)+abs(self.sdec/3600.0))*signo
-            self.dec_sec =self.dec_dec*3600
 
         #ah
         i = datos.find('AH')
@@ -212,69 +211,8 @@ class TELESCOPIO84(UTIL,CLIENTE):
             print data
             return -1
 ###########################################################
-    def move_tel_shell(self,data):
-        print 'Vamos a Mover telescopio a',data
-        print data
-        mando=data+' \n'
-        data, status = self.manda(mando)
-        if not status:
-            print "bad"
-            print data
-            return -1
-###########################################################
-###########################################################
-    def espera_telescopio_estable(self,pasos=5):
-        print 'Esperando a que se estabilise el telescopio con tracking enable'
-        espera=True
-        if espera:
-            self.lee_coordenadas()
-            olddec=self.dec_sec
-            oldar=self.ar_sec
-            loop=True
-            conta=0
-            while loop:
-                time.sleep(0.5)
-                self.lee_coordenadas()
-                print 'telescopio dec,ar',self.dec_dec,self.ar_dec
-                d=self.esta_dentro_error(self.dec_sec,olddec,2.5)
-                aa=self.esta_dentro_error(self.ar_sec,oldar,20)
-                print d,aa,conta
-                if (d) and aa:
-                    conta+=1
-                else: conta=0
-                if conta >pasos: loop=False
-                    
-                olddec=self.dec_sec
-                oldar=self.ar_sec
-        
-###########################################################
-    def esta_dentro_error(self,data,deseado,error):
-        #en segundos ahora
-        #regresa booleano
-        #error en porcentaje
-        
-        dmax=deseado+abs(error)
-        dmin=deseado-abs(error)
-        
-        print 'dato=%3.3f, deseado=%3.3f, min=%3.3f, max=%3.3f '%(data,deseado,dmin,dmax)
-        if data<dmax and data>dmin :return True
-        else: return False
-###########################################################
-    def define_nuevas_coordenadas(self):
-            #print 40*'^'
-            print 'Definiendo nuevas coordenadas'
-            
-            data, status = self.manda('CORR \n')
-            if not status:
-                print "bad new cenit"
-                print data
-            time.sleep(2)
-            
-###########################################################
 '''
 a=TELESCOPIO84()
-#a.lee_coordenadas()
-#a.info()
-a.espera_telescopio_estable()
-
+a.lee_coordenadas()
+a.info()
 '''

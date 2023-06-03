@@ -4,8 +4,7 @@
 import os
 import urllib
 import cStringIO
-#import libxml2
-import xml as libxml2
+import libxml2
 from time import sleep
 
 # V0.1 E.colorado

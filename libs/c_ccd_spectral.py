@@ -33,8 +33,6 @@ class CCD_SPECTRAL(CCD, CLIENTE):
         #self.ip = "red0"
 
         self.puerto = 9710
-        #self.set_timeout(2)
-
         self.gain = 1
         '''
         self.output = 2  # Num canales de salida
@@ -242,6 +240,7 @@ class CCD_SPECTRAL(CCD, CLIENTE):
 ############################################################################
     def espera_estatus(self, t):
         print "esperando ccd ", self.label2, " ", t, "s.........."
+        ok=True
         while not self.ccd_ready:
             print '.',
             # self.mis_variables.gui_update()
@@ -250,8 +249,11 @@ class CCD_SPECTRAL(CCD, CLIENTE):
             time.sleep(0.1)
             if self.stop:  # verifica si se presiono Cancelar
                 print "Espera_estatus Cancelado"
+                ok=False
                 break
         print "llego ccd ready !!!!!!!!!!!!", self.ccd_ready
+
+        return ok
 
         # Espera para no volver exponer si leer la imagen
         # time.sleep(1)
@@ -276,12 +278,12 @@ class CCD_SPECTRAL(CCD, CLIENTE):
 
 ############################################################################
     def cancela(self):
-        print "Cancelando CCD Esopo"
+        print "*** Cancelando CCD SPECTRALS ***"
         data, s = self.manda("CANCELA ")
         if not s:
             print "bad"
             self.mis_variables.mensajes(data, "Log", "rojo")
-        print "Si cancelamos CCD ", data
+        print "Si cancelamos CCD Spectral", data
         return
 ############################################################################
 

@@ -1,0 +1,22 @@
+#!/bin/csh -f
+
+/usr/local/bin/ds9 -fifo  /home/observa/.devmarconi0/imt1o  -title Mezcal&
+
+source /iraf/iraf/unix/hlib/irafuser.csh
+cl
+
+#xrdb -merge /var/X11R6/lib/app-defaults/XGterm
+
+
+# /usr/local/bin/xgterm -geometry 80x25+10+10 -sb -sl 320 \
+ #       -bg black -fg white -fn 10x20 \
+#	-T "XGterm:  " \
+#	-n "IRAF" -e $START_IRAF &
+#echo " IRAF XGterm Window started ..."
+#echo " Starting "$IRAF_DISP" as the image display of your IRAF session ..."
+
+#exit 0
+###########################################################################
+###########################################################################
+
+

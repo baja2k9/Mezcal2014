@@ -6,6 +6,7 @@
 # V2.14 -E.Colorado,Ago-2015, siempre despues de sequencia pongo obturador en remoto (control CCD)
 # V2.15 -E.Colorado,Sep-2016, cambio de signo en escala de placa con cambio de canal de lectura left
 # V2.20 -E.Colorado,Ago-2017, Hice cambio para que funcionara el roi 2 center con CCD Spectral2, arregle bug en pdf, bias en macro no era cero la ultima
+# V2.22 -E.Colorado,Ago-2018, Bugs reportados por M. richer arreglados
 
 import pygtk
 pygtk.require("2.0")
@@ -129,6 +130,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         self.STOP_secuencia=False
         self.imgtype='object'
         self.modo_mez='Image'
+        self.is_exec_macro=False
+        self.is_ccd_completed=False
 
 
         builder=gtk.Builder()
@@ -521,6 +524,9 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         self.move_guider_enable.set_active(1)
 
 
+        # crear conexion de eventos del teclado para sacar menu escondido
+        self.window.add_events(gtk.gdk.KEY_RELEASE_MASK)
+        self.window.connect('key-release-event', self.on_key_press_event)
 
 
         #self.window_exit = builder.get_object("b_exit")
@@ -835,8 +841,13 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
             print "activando ccd Espectral2 para mezcal"
             self.mi_ccd.arscale=  self.plate_scale*-1
 
+        elif ccd=="SPECTRAL":
+            print "activando ccd Espectral 1 para mezcal"
+            self.mi_ccd.arscale=  -self.plate_scale
+            self.mi_ccd.decscale = +self.plate_scale
 
         self.mi_ccd.ccd_ready=True
+        self.is_ccd_completed = True
         print "************ Termine Do Main Continue  *******************"
 ############################################################################
     def on_window_destroy(self, widget, data=None):
@@ -1054,6 +1065,48 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
             self.b_lamp.modify_base(gtk.STATE_ACTIVE, gtk.gdk.color_parse("blue"))
             self.b_lamp.modify_fg(gtk.STATE_ACTIVE, gtk.gdk.color_parse("blue"))
         '''
+
+    ############################################################################
+    def on_key_press_event(self, widget, event, *args):
+        keyname = gtk.gdk.keyval_name(event.keyval).upper()
+
+        # if event.state & gtk.gdk.SHIFT_MASK :
+
+
+        if event.state & gtk.gdk.CONTROL_MASK:
+            if keyname == 'F':
+                print "CTRL + Menu secreto del FOCO "
+                rect = self.main_window.allocation
+                pos = self.main_window.get_position()
+                print pos
+                self.extra_window.show()
+                self.extra_window.move(pos[0] + rect.width + 10, pos[1])
+            if keyname == 'T':
+                print "CTRL + Threads info "
+                # verificar threads
+
+                txt = 'Header is alive? ' + str(self.thread.isAlive())
+                print txt
+                self.mi_ccd.mis_variables.mensajes(txt, "Log", "verde")
+
+                txt = 'contadores activos= ' + str(threading.activeCount())
+                print txt
+                self.mi_ccd.mis_variables.mensajes(txt, "Log", "verde")
+
+                txt = 'lista threads= ' + str(threading.enumerate())
+                print txt
+                self.mi_ccd.mis_variables.mensajes(txt, "Log", "verde")
+
+                txt = 'Expone is alive? ' + str(self.thread2.isAlive())
+                print txt
+                self.mi_ccd.mis_variables.mensajes(txt, "Log", "verde")
+
+
+
+            if keyname == 'Z':
+                print "CTRL + Z Menu secreto de Astrometry "
+
+
 ############################################################################
     def on_mirror_toggled(self, widget, data=None):
         print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
@@ -1463,7 +1516,9 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         self.mi_ccd.tam_binario=0
         self.stop = False
         self.mi_ccd.ccd_ready=False
+        self.is_ccd_completed = False
         self.estadoBotones(False)
+        self.mi_ccd.stop=False
 
 
         #hacer los pre expone****
@@ -1541,6 +1596,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         print "///////////////////////////////////////////////////////////"
         print "///////////////////////////////////////////////////////////"
         print "///////////////////////////////////////////////////////////"
+        self.is_ccd_completed = True
 ############################################################################
     def actualizaBarra (self,tfinal):
         progreso = 0
@@ -1568,22 +1624,28 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         tim = float(self.e_tiempo.get_text())
 
         if self.stop == False:
-            print "Ya podernos traernos los datos !!!!!!!!!!!!!!!"
-            self.mi_ccd.espera_estatus(tim)
-            self.mi_ccd.trae_binario()
-            if data=='fli_dark':
-                print 'do display para fli ..........'
-                self.do_display_flidark()
+            print "En Espera de podernos traernos los datos !!!!!!!!!!!!!!!"
+            resp=self.mi_ccd.espera_estatus(tim)
+            if resp:
+                print "Ya podernos traernos los datos !!!!!!!!!!!!!!!"
+                self.mi_ccd.trae_binario()
+                if data=='fli_dark':
+                    print 'do display para fli ..........'
+                    self.do_display_flidark()
+                else:
+                    #print 'do display Normal  ..........'
+                    self.do_display()
+                self.post_expone()
+                self.upgrade_fits_mezcal()
             else:
-                #print 'do display Normal  ..........'
-                self.do_display()
-            self.post_expone()
-            self.upgrade_fits_mezcal()
+                print 'Me cancelaron durante exposicion'
 
         else:
             print "esta stop TRUE, me cancelaron xxxxxxxxxxxxxxxxxxxxxx"
         time.sleep(0.5)
-        self.estadoBotones(True)
+        if not self.is_exec_macro:
+            self.estadoBotones(True)
+
         print "FIN Espera ccd general........................."
 ############################################################################
     def do_display(self):
@@ -1679,6 +1741,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         '''
 ############################################################################
     def on_cancela_clicked (self, widget, data=None):
+        print '\n\n******************* CANCEL **********************\n\n'
         self.mi_ccd.mis_variables.mensajes("vamos a CANCELAR","Log","rojo")
         self.mi_ccd.stop=True
         self.stop = True
@@ -1686,6 +1749,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #hacer pequeno delay para que todo se destruya bien
         time.sleep(1)
         self.estadoBotones(True)
+        print 'Cancel finished ...'
 ############################################################################
     def colorBotones(self):
         self.cancela.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("red"))
@@ -2116,15 +2180,19 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #falta hacer chica la ventana
 ############################################################################
     def on_b_stop_sec_clicked(self, widget, data=None ):
-        print 'stop secuencia'
+        print '\n\n******************* CANCEL secuence **********************\n\n'
         self.STOP_secuencia=True
+        while gtk.events_pending(): gtk.main_iteration()
         self.on_cancela_clicked(None,None)
+        while gtk.events_pending(): gtk.main_iteration()
+        print '\n******************* Stop ended ********************** \n'
 ############################################################################
     def on_b_exec_sec_clicked(self, widget, data=None ):
         print 'executa sequencia'
         self.mi_ccd.stop=False
         self.stop = False
         self.mi_ccd.ccd_ready=True
+        self.is_exec_macro=True
         self.estadoBotones(False)
         self.STOP_secuencia=False
         oldtime=self.mi_ccd.etime
@@ -2142,7 +2210,9 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         conta=0
         for p in pasos:
             conta+=1
-            if self.STOP_secuencia: break
+            if self.STOP_secuencia:
+                print 'Cancelando Secuenecias'
+                break
             t='%s \t\t          (paso %d de %d)'%(p,conta,l)
             self.mi_ccd.mis_variables.mensajes(t,'nolog','azul')
             self.e_step.set_text(p)
@@ -2157,6 +2227,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 
             ##
             while gtk.events_pending(): gtk.main_iteration()
+            if self.stop: break
+            if self.mi_ccd.stop: break
             self.analizaMacro(p)
             #Quitar lo subrayado
             self.tbuffer2.remove_tag(self.Tag_azul2,iter_ini,iter_fin)
@@ -2173,6 +2245,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         print 'vamos a devolver el modo a remote'
         self.c_shutter.set_active(0)
         self.deshabilita_shutter()
+        self.is_exec_macro = False
 
 
         self.mi_ccd.mis_variables.mensajes('===> Macro: '+nombre+' DONE!! <===','nolog','verde')
@@ -2185,7 +2258,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
     def analizaMacro(self,linea):
         #macros
 
-        print "Ejecutando instruccion ",linea
+        print "AnalizaMacro Ejecutando instruccion ",linea
         if len(linea)<1: return
         ln = linea.strip()
         arg = ln.split()
@@ -2198,20 +2271,21 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
                 self.imgtype='zero'
 
             #estara ya esponiendo
-            print 'is CCD ready:',self.mi_ccd.ccd_ready
+            print 'is CCD completed:',self.is_ccd_completed
 
-            if self.mi_ccd.ccd_ready==False:
+            if self.is_ccd_completed==False:
                 self.mi_ccd.mis_variables.mensajes("Hey, the CCD is already taking a selfie, wait..")
 
-            while not self.mi_ccd.ccd_ready:
+            while not self.is_ccd_completed:
                 if self.STOP_secuencia: break
                 if self.stop: break
                 self.delay_gui_safe(1)
 
-            print 'CCD is Ready'
-            #Hacerlo multitarea
-            ethread = threading.Thread(target=self.on_expone_clicked,args = (None,2,'MEZ'))
-            ethread.start()
+            print 'CCD is Ready, next exposure will continue'
+            if not self.mi_ccd.stop:
+                #Hacerlo multitarea
+                ethread = threading.Thread(target=self.on_expone_clicked,args = (None,2,'MEZ'))
+                ethread.start()
             #self.on_expone_clicked(None,2)
         elif arg[0] == "tint":
             #argumento da milisegundos
@@ -2965,7 +3039,7 @@ if __name__=="__main__":
     print "NoMezcal",NOMEZCAL
 
     DEBUG=True    #para algunos print del main
-    VERSION='2.20'
+    VERSION='2.22'
     LOG="nolog"
     colores="/usr/local/instrumentacion/Mezcal2014/./mis_colores.rc"
     gtk.rc_set_default_files(colores)

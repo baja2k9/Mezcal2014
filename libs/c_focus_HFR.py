@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 #https://www.lost-infinity.com/night-sky-image-processing-part-6-measuring-the-half-flux-diameter-hfd-of-a-star-a-simple-c-implementation/
 
-#modifique para no usar pyds9 algunas PC no lo soportan, las viejitas
-# V0.2 para tel 84, mayo-2018, cambie de C a python
-
-
 from pylab import *
 import numpy
 from numpy import polyfit ,poly1d
@@ -25,8 +21,7 @@ import matplotlib.pyplot as plt
 
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
-#from pyds9 import *
-import c_ds9
+from pyds9 import *
 import time
 
 ############################################################################
@@ -38,19 +33,16 @@ class ENFOQUE():
     'Calculo de mejor FOCO usando HFD'
 
 ############################################################################
-    def __init__(self,ds9):
-        self.ds9=ds9
-        #self.d = DS9()
+    def __init__(self):
+        self.d = DS9()
         #self.d.set('zoom to fit')
         #self.d.set('scale log')
-        self.radio=60
+        self.radio=45
 
         self.images_list = []
         self.Main_list = []
         self.HFR_fits = []
         self.POS_fits = []
-        self.Directorio='/imagenes/autofoco_hfr'
-        
 
 ##############################################################
     def load_fit(self,f_imagen):
@@ -99,110 +91,10 @@ class ENFOQUE():
                 im_fits.append(Ft)
         return im_fits
 ##############################################################
-    def enfoque_anexa(self,imagen):
-        #para enfoque de una una imagen
-
-        #sacar info de la imagen y meterlas a las listas apropiadas
-        self.Main_list.append(imagen)
-
-        #pos secundario
-        key = self.datos_keyword(imagen, 'SECONDAR')
-        self.POS_fits.append(key.value)
-
-        #HFR individual
-        self.HFR_fits.append(self.HFR2(imagen))
-
-
-
-#############################################################
-    def procesa_listas(self):
-        #se corre al ultimo de enfoque anexa, calcula y grafica
-        #########################################################
-        # mas
-        pp = self.POS_fits
-        hh = self.HFR_fits
-
-        # Ajustar polinomio
-        z = polyfit(pp, hh, 4)
-        p = poly1d(z)
-        hhh = []
-        for d in pp:
-            hhh.append(p(d))
-
-        # encontrar punto minimo de polimonio
-        data = np.arange(min(self.POS_fits), max(self.POS_fits) + 1, 0.1)
-        minimo = 1e10
-        for d in data:
-            a = p(d)
-            if a < minimo:
-                minimo = a
-                dx = d
-
-        # encontrar punto minimo de datos
-        minimo = 1e10
-        conta = 0
-        for d in hh:
-            print 'd=', d
-            if d < minimo:
-                minimo = d
-                dx = d
-                donde_min = conta
-            conta += 1
-
-        print 'minimo en posicion', donde_min
-        ###########################################################
-        self.fig=plt.figure(1)
-        plt.subplot(111)
-        # x,y,X21,Y1,X22,Y2=self.Mejor_foco()
-        x, y, X21, Y1, X22, Y2 = self.Mejor_foco2(donde_min)
-        print 'Punto Mejor Foco: ', (x, y)
-        #plt.title("Mejor Foco")
-        plt.xlabel("Posicion")
-        plt.ylabel("HFR")
-        # plt.plot(self.POS_fits,self.HFR_fits,marker='1', label="radios")
-        plt.plot(self.POS_fits, self.HFR_fits, 'ro', label="radios")
-
-        plt.plot(X21, Y1, marker='1', label="Y1 m_izq")
-        plt.plot(X22, Y2, marker='1', label="Y2 m_der")
-
-        plt.plot(x, y, marker='o', color='k', label="Best Focus")
-
-        # otro metodo
-        # encontrar punto minimo de polimonio
-        data = np.arange(min(self.POS_fits), max(self.POS_fits) + 1, 0.1)
-        minimo = 1e10
-        conta = 0
-        for d in data:
-            a = p(d)
-            if a < minimo:
-                minimo = a
-                dx = d
-                donde_min = conta
-            conta += 1
-
-        print 'valor minimo x polinomio', minimo, 'en', dx
-        plt.plot(dx, minimo, marker='o', color='b', label="Best Focus 2 poly")
-        plt.plot(pp, hhh, marker='1', label="poly-rad")
-
-        plt.legend(loc='upper left')
-        plt.grid(True)
-        txt="Mejor Foco, Metodo 1= %3.2f, Metodo 2= %3.2f"%(x,dx)
-        print txt
-        plt.title(txt)
-        #plt.show()
-        
-        #plt.show(block=False)
-        Mejor_imagen = self.Encontrar_imagen(x)
-        #self.d.set_np2arr(Mejor_imagen)
-
-        return x,Mejor_imagen
-
-##############################################################
     def enfoque(self):
-        #enfoque cuando ya tienes todas las imagenes
-        
+        Directorio='David/Autofoco0/'
 
-        self.Main_list=self.busca_imagenes(self.Directorio) #saca lista de imagenes
+        self.Main_list=self.busca_imagenes(Directorio) #saca lista de imagenes
         #self.Main_list = ['David/Autofoco3/autofoco0021o.fits']
 
         print 'Lista HFR:  ', self.HFR_fits #lista cons los resultados de los radios
@@ -218,9 +110,53 @@ class ENFOQUE():
             print h,self.Main_list[conta],self.POS_fits[conta]
             conta+=1
 
-        #########################################################
-        r=self.procesa_listas()
-        return r
+
+        plt.figure(1)
+        plt.subplot(111)
+        x,y,X21,Y1,X22,Y2=self.Mejor_foco()
+        print 'Punto Mejor Foco: ',(x,y)
+        plt.title("Mejor Foco")
+        plt.xlabel("Posicion")
+        plt.ylabel("HFR")
+        #plt.plot(self.POS_fits,self.HFR_fits,marker='1', label="radios")
+        plt.plot(self.POS_fits, self.HFR_fits, 'ro', label="radios")
+
+        plt.plot(X21,Y1, marker='1', label="Y1 m_izq")
+        plt.plot(X22,Y2, marker='1',label="Y2 m_der")
+
+        plt.plot(x,y,marker='o',color='k', label="Best Focus")
+
+
+        #mas
+        pp=self.POS_fits
+        hh=self.HFR_fits
+
+        # Ajustar polinomio
+        z = polyfit(pp, hh, 4)
+        p = poly1d(z)
+        hhh=[]
+        for d in pp:
+            hhh.append(p(d))
+
+        #encontrar punto minimo de polimonio
+        data=np.arange(min(self.POS_fits),max(self.POS_fits)+1,0.1)
+        minimo=1e10
+        for d in data:
+            a=p(d)
+            if a<minimo:
+                minimo=a
+                dx=d
+
+        print 'valor minimo x polinomio', minimo, 'en',dx
+        plt.plot(dx, minimo, marker='o', color='b', label="Best Focus 2 poly")
+        plt.plot(pp, hhh, marker='1', label="poly-rad")
+
+
+        plt.legend(loc='upper left')
+        plt.grid(True)
+        plt.show()
+        Mejor_imagen=self.Encontrar_imagen(x)
+        self.d.set_np2arr(Mejor_imagen)
 ##############################################################
     def Mejor_foco(self):
         #Recta 1
@@ -229,19 +165,14 @@ class ENFOQUE():
         L3=iround(L2/2) #1/5
         print 'L',L,L2,L3
 
-        X1=self.POS_fits[0:L2+1]
-        Y1=self.HFR_fits[0:L2+1]
+        X1=self.POS_fits[0:L2]
+        Y1=self.HFR_fits[0:L2]
         print X1,Y1
-
-
+        
         #Recta2
         X2=self.POS_fits[L2:L]
         Y2=self.HFR_fits[L2:L]
 
-        print '------'
-        print 'recta izquierda', X1
-        print 'recta derecha', X2
-        print '------'
         #Ecuacion 1
         print X2,Y2
         Z1= polyfit(X1,Y1,1)
@@ -270,55 +201,6 @@ class ENFOQUE():
             X22[y2]=(Y2[y2]-p1[0])/p1[1]
 
         return x,y,X21,Y1,X22,Y2
-
-    ##############################################################
-    def Mejor_foco2(self,mitad):
-        # Recta 1
-        L = int(len(self.POS_fits))
-        L2 = iround(L / 2)  # mitad
-        L3 = iround(L2 / 2)  # 1/5
-        print 'L', L, L2, L3
-
-        X1 = self.POS_fits[0:mitad]
-        Y1 = self.HFR_fits[0:mitad]
-        print X1, Y1
-
-        # Recta2
-        X2 = self.POS_fits[mitad:L]
-        Y2 = self.HFR_fits[mitad:L]
-
-        print '------'
-        print 'recta izquierda', X1
-        print 'recta derecha', X2
-        print '------'
-        # Ecuacion 1
-        print X2, Y2
-        Z1 = polyfit(X1, Y1, 1)
-        p = poly1d(Z1)
-        print 'Ec 1: ', p
-
-        # Ecuacion 2
-        Z2 = polyfit(X2, Y2, 1)
-        p1 = poly1d(Z2)
-        print 'Ec 2: ', p1
-
-        # Punto mejor foco
-        x = (p1[0] - p[0]) / (p[1] - p1[1])
-        y = p[1] * x + p[0]
-
-        Y1 = Y1 + [0]
-        Y2 = [0] + Y2
-        X21 = list(range(len(Y1)))
-        X22 = list(range(len(Y2)))
-        # y=mx+b   x=(y-b)/m
-        # Rectas para graficar sobre V
-        for y1 in range(0, len(Y1)):
-            X21[y1] = (Y1[y1] - p[0]) / p[1]
-
-        for y2 in range(0, len(Y2)):
-            X22[y2] = (Y2[y2] - p1[0]) / p1[1]
-
-        return x, y, X21, Y1, X22, Y2
 ##############################################################
 ##############################################################
     def HFR_imagenes2(self):
@@ -444,13 +326,11 @@ class ENFOQUE():
         x, y = self.Buscar_Centroide3(img_orig)
 
         # Graficar radio
-        #cmd = "Circle (%d,%d,%d)" % (x, y, self.radio)
+        cmd = "Circle (%d,%d,%d)" % (x, y, self.radio)
         # print cmd
-
         #mandar a DS9
-        #self.d.set_np2arr(img_orig)
-        self.ds9.circle(x,y,self.radio)
-        #self.d.set('regions', cmd)
+        self.d.set_np2arr(img_orig)
+        self.d.set('regions', cmd)
 
         #nuevo metodo
         #vector radios
@@ -501,32 +381,24 @@ class ENFOQUE():
         plt.show()
         '''
         # Grafica HFR
-        #cmd = "circle(%d,%d,%d)" % (x, y, HFR)
-        self.ds9.circle(x,y,HFR)
-        #self.ds9.set_mando('regions ' + cmd)
-        #self.d.set('regions', cmd)
+        cmd = "circle(%d,%d,%d)" % (x, y, HFR)
+        self.d.set('regions', cmd)
 
 
         #poner cruz
         s=30
         #/
-        #cmd = "line(%d,%d,%d,%d)" % (x-s, y-s, x+s,y+s)
-        #print cmd
-        #self.ds9.set_mando('regions ' + cmd)
-        self.ds9.line(x-s, y-s, x+s,y+s)
-        #self.d.set('regions', cmd)
+        cmd = "line(%d,%d,%d,%d)" % (x-s, y-s, x+s,y+s)
+        self.d.set('regions', cmd)
         #\
-        #cmd = "line(%d,%d,%d,%d)" % (x + s, y - s, x - s, y + s)
-        #self.ds9.set_mando('regions ' + cmd)
-        self.ds9.line(x + s, y - s, x - s, y + s)
-        #self.d.set('regions', cmd)
+        cmd = "line(%d,%d,%d,%d)" % (x + s, y - s, x - s, y + s)
+        self.d.set('regions', cmd)
 
         #time.sleep(1)
         HFR=H
         return HFR
 ##############################################################
     def Encontrar_imagen(self,Pos):
-        #de la lista de imagenes ya procesadas, encontrar la mas cercana al foco optimo
         print 'encontrando imagen cerca de pos',Pos
         print 'lista de focos',self.POS_fits
         print 'numero de imagenes',len(self.POS_fits)
@@ -545,15 +417,8 @@ class ENFOQUE():
                 print 'Imagen con mejor enfoque: ', Im
                 Im_matriz=self.load_fit(Im)
                 break
-        return Im
+        return Im_matriz
 ##############################################################
-    def show(self):
-        print 'show plt'
-        #plt.show()
-        canvas=FigureCanvas(self.fig)
-        output='/imagenes/hfr.png'
-        #canvas.print_figure(output, dpi=144)
-        canvas.print_png(output)
 ##############################################################
     def cmask(self,cx,cy, radius, array):
         Im=numpy.copy(array)
@@ -572,27 +437,8 @@ class ENFOQUE():
 
         return (sum(Im[mask]))
 ##############################################################
-    def limpia(self):
-        self.images_list = []
-        self.Main_list = []
-        self.HFR_fits = []
-        self.POS_fits = []
-        self.Directorio = '/imagenes/autofoco_hfr'
-
-##############################################################
-    def __del__(self):
-        print 'bye bye clase ENFOQUE'
-        self.limpia()
-        plt.close()
-        #del plt
 ##############################################################
 #del dir imagenes, grafica de nasa
-'''
-d=c_ds9.DS9()
-d.run()
-time.sleep(3)
-A=ENFOQUE(d)
+A=ENFOQUE()
 A.enfoque()
-A.show()
-'''
 ##############################################################

@@ -11,7 +11,6 @@ import time
 #V1.5 agrege set_frame
 #V1.6 Voy a correr todo desde bin/ds9
 #V1.7 modificacioner para ubuntu 16.04 iraf direfente
-#anexe line
 ############################################################################
 class DS9:
     'manejo del ds9 con xpa access protocol'
@@ -77,7 +76,6 @@ class DS9:
 ############################################################################
     def loadfile(self,archivo):
         cmd="./bin/xpaset "+"-p "+self.template+" file "+archivo
-        print cmd
         self.ejecuta(cmd)
 
 ############################################################################
@@ -115,7 +113,7 @@ class DS9:
         #version1.3 funciona diferente el pgrep entre slackware y ubuntu
 
         print "running ds9",self.__ds9exe
-        cmd="./bin/ds9 -mode region -title "+self.template
+        cmd="./bin/ds9 -title "+self.template
         print cmd
         proceso=self.checa_proceso(cmd)
 
@@ -125,7 +123,7 @@ class DS9:
         else:
             print "No esta corriendo"
             #vamos a correrlo
-            cmd=self.__ds9exe +" -mode region -title "+self.template+ " &"
+            cmd=self.__ds9exe +" -title "+self.template+ " &"
             print cmd
             os.system(cmd)
             return -1
@@ -181,7 +179,7 @@ class DS9:
 ############################################################################
     def restart_iraf_ds9(self):
         #os.system('pwd')
-        cmd="./unload2.tcl ds9 -mode region -title "+self.template
+        cmd="./unload2.tcl ds9 -title "+self.template
         rx=self.ejecuta(cmd)
         print rx
 
@@ -214,7 +212,6 @@ class DS9:
 ############################################################################
     def set_mando(self,mando=None):
         cmd="./bin/xpaset "+"-p "+self.template+" "+mando
-        print 'set_mando=',cmd
         self.ejecuta(cmd)
 
 ############################################################################
@@ -224,10 +221,5 @@ class DS9:
 
 
 ############################################################################
-############################################################################
-    def line(self, x1,y1,x2,y2):
-        cmd = "echo \"line %d %d %d %d \" | ./bin/xpaset %s regions" %(x1,y1,x2,y2,self.template)
-        #print cmd
-        self.ejecuta(cmd)
 
 ############################################################################

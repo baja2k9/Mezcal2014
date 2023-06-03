@@ -1,4 +1,3 @@
-
 ###########################################################
 class VACIA():
     'para luego hacerle overloading si se nececita '

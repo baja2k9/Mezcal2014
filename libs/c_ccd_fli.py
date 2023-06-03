@@ -352,8 +352,8 @@ class CCD_FLI(CCD,CLIENTE):
 
         #print "Local header de FLI"
 
-        hdr.set("TEMPBASE",float(self.temp_base), "FLI BASE CCD Temperature (celsius degree)",after="CCDTEMP")
-        hdr.set("POWER",float(self.power), "FLI Peltier Cooler Power %",after="TEMPBASE")
+        hdr.update("TEMPBASE",float(self.temp_base), "FLI BASE CCD Temperature (celsius degree)",after="CCDTEMP")
+        hdr.update("POWER",float(self.power), "FLI Peltier Cooler Power %",after="TEMPBASE")
         hdr.add_comment("Extra Header parameter for FLI Cameras only",after="CCDTEMP")
 
         #modificar
@@ -363,9 +363,9 @@ class CCD_FLI(CCD,CLIENTE):
         else:
             used=1
 
-        hdr.set("NAMPS",2, 'Number of Amplifiers')
-        hdr.set("CCDNAMPS",used, 'Number of amplifiers used')
-        hdr.set("AMPNAME",self.lista_speed[self.output_actual][0], 'Amplifier name')
+        hdr.update("NAMPS",2, 'Number of Amplifiers')
+        hdr.update("CCDNAMPS",used, 'Number of amplifiers used')
+        hdr.update("AMPNAME",self.lista_speed[self.output_actual][0], 'Amplifier name')
 ############################################################################
     def pre_expone(self):
         #para actualizar en el header CCD temp, base y power

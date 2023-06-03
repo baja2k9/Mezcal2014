@@ -4,7 +4,6 @@
 #usa astrometry.net
 
 #V0.1 E. Colorado, Dic-2015 -> Inicio a una semana de salir de vacaciones
-#V0.2 E. Colorado, Oct-2018 -> Busca Solver por si esta en diferente lugar
 
 #ej
 #solve-field --overwrite --scale-units arcsecperpix --scale-low 0.46 --scale-high 0.48 --ra 248.9 --dec 9.7 --radius 0.5 PG1633_0990003o.fits
@@ -23,30 +22,15 @@ class ASTROMETRY():
 
 
     def __init__(self):
-        print "Class Astrometry.net"
-        self.decscale=+0.2341 #tel84
-        self.img_file=''
-        self.pgm='/usr/bin/solve-field'
-
-        #self.pgm='/usr/local/astrometry/bin/solve-field'
-
-        self.params='--overwrite  --no-verify --no-plots'
-        self.output = 'No encontre Astrometria \n'
-        self.is_solved = False
-        self.radius = 2
-        # encontrar solver
-
-        #self.pgm=self.busca_solver()
-
-
-###########################################################
-    def busca_solver(self):
-        process = Popen(["which", "solve-field"], stdout=PIPE)
-        (output, err) = process.communicate()
-        exit_code = process.wait()
-        print 'encontre solver en:',output
-        return output
-
+       print "Class Astrometry.net"
+       self.decscale=+0.2341 #tel84
+       self.img_file=''
+       #self.pgm='/usr/bin/solve-field'
+       self.pgm='/usr/local/astrometry/bin/solve-field'
+       self.params='--overwrite --no-fits2fits --no-verify --no-plots'
+       self.output = 'No encontre Astrometria \n'
+       self.is_solved = False
+       self.radius = 0.5
 ###########################################################
     def RA_to_degrees(self,ra):
         r=ra.split(':')
@@ -111,14 +95,8 @@ class ASTROMETRY():
         print 'Center ar=',self.centro_ar
 
         a=dec.split(':')
-        print a
-        print a[0][0]
-        if a[0][0]=='-':
-            signo=-1
-        else:
-            signo=1
-        
-        self.centro_dec= signo*(abs(int(a[0]))+abs(int(a[1])/60.0)+abs(float(a[2])/3600.0))
+        #print a
+        self.centro_dec= abs(int(a[0]))+abs(int(a[1])/60.0)+abs(float(a[2])/3600.0)
         print 'Center dec=',self.centro_dec
 
 
@@ -167,7 +145,7 @@ class ASTROMETRY():
             %(self.pgm,self.params,low,hi)
 
         if coords_ok:
-            cmd2=' --ra %f --dec %f --radius 2 '%(self.RA_DEG,self.DEC_DEC)
+            cmd2=' --ra %f --dec %f --radius 0.5 '%(self.RA_DEG,self.DEC_DEC)
             cmd+=cmd2
 
         cmd=cmd+' '+self.img_file
@@ -218,14 +196,10 @@ class ASTROMETRY():
         return s1
 
 ###########################################################
-
 '''
 a=ASTROMETRY()
-
-s,t=a.solve('/imagenes/image5.fits')
+s,t=a.solve('/home/colorado/CloudStation/Progs/PG1633_0990003o.fits')
 print s,t
-
-
 s,t=a.solve('/home/colorado/Downloads/cieloV_0001o.fits')
 print s,t
 s,t=a.solve('/imagenes/autofoco0014o.fits')

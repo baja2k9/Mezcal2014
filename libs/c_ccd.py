@@ -241,9 +241,6 @@ class CCD(WEATHER,ASTRO):
             elif ccd=='site5' or ccd=='site4':
                 self.decscale=0.426
                 self.arscale =0.426
-            if ccd=="e2vm5" :
-                self.decscale=0.263906
-                self.arscale= 0.263906
 
         print " escala dec ",self.decscale, "ar",self.arscale
 ############################################################################
@@ -369,10 +366,12 @@ class CCD(WEATHER,ASTRO):
     def lee_MarconiServer(self,socket):
         line=socket.makefile('r',1)	#manejo del socket tipo archivo
         binario = 0
+        ok=True #todo bien
         while 1:
             data=line.readline().strip()
             if self.stop:					#verifica si se presiono Cancelar
-                print "Espera_estatus Cancelado"
+                print "c_ccd ->Espera_estatus Cancelado"
+                ok=False
                 break
             try:
                 txt=str(data)
@@ -392,6 +391,7 @@ class CCD(WEATHER,ASTRO):
         line.close()
         #print "lei todo red Esopo"
         #print "cerre socket esopo"
+        return ok
 ############################################################################
     def procesa_datos_MarconiServer(self,data):
         #print "procesando datos de MarconiServer"

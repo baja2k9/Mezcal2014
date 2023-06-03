@@ -14,6 +14,4 @@ echo "Mezcal Restart Iraf scrip ............"
 
 ./unload.py /bin/csh -f /tmp/start_iraf_observa.devmezcal0
 
-#la forma nueva
-./unload.py ds9 -port 5139 -title Mezcal
-./unload.py xgterm -sbr -fn 9x15 -sl 400 -cr red -title IRAF_MEZCAL -e cl
+

@@ -278,8 +278,8 @@ class BIN2FITS_MAIN(CCD):
 
         np = numpy.frombuffer(datos, dtype=numpy.uint16)
 
-        #print "min", min(np)
-        #print "max",max(np)
+        print "min", min(np)
+        print "max",max(np)
 
         #np=np-32768
         #ojo las versiones iniciales no lo ocupaban el swap
@@ -650,8 +650,10 @@ class BIN2FITS_MAIN(CCD):
         #sqm
         print "Pidiendo datos SQM"
         if self.tel == "2.12m":
+            '''
             if self.sqm.read():
                 self.k.append(["SQM",self.sqm.mag, "Sky Brightness mag/arsec^2"])
+            '''
             if self.clima.read():
                 self.k.append(["I_TEMP", self.clima.temp, "Dome internal temperature"])
                 self.k.append(["I_HUM", self.clima.hum, "Dome internal humidity"])

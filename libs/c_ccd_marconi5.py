@@ -18,13 +18,13 @@ class CCD_MARCONI5(CCD_ESOPO):
         self.ysize=self.ysize_total
         self.xend=self.xsize_total
         self.yend=self.ysize_total
-        self.arscale=0.263906
-        self.decscale=0.263906
+        self.arscale=0.2341
+        self.decscale=0.2341
         self.rotate_axis=False
 
         self.usuario="Marconi5_ccd class"
         self.ip="192.168.0.40"
-        #self.ip="red0"
+        self.ip="red0"
         self.puerto=9710
         self.gain=1
 
