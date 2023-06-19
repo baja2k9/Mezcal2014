@@ -1,9 +1,18 @@
-#!/bin/bash
+#! /bin/tcsh -f
 
-#no olvidar: cp login.cl /imagenes/
 
-cd /imagenes
-export IMTDEV=inet:5139
-ds9 -port 5139 -title Mezcal &
-xgterm -sbr -fn 9x15 -sl 400 -cr red -title IRAF_MEZCAL -e cl &
+# Load the X-resources of XGterm
+#-------------------------------
+xrdb -merge /var/X11R6/lib/app-defaults/XGterm
+#
+#
+/usr/local/bin/xgterm -geometry 80x25+10+10 -sb -sl 320 \
+        -bg black -fg white -fn 10x20 \
+	-T "XGterm:  " \
+	-n "IRAF" -e /usr/local/instrumentacion/Mezcal2014/umezcal &
+# /usr/local/bin/ds9 -fifo  /home/observa/.devmarconi0/imt1 -title MarconiOnly&
+echo "iraf+ds9"
+exit 0
+###########################################################################
+###########################################################################
 

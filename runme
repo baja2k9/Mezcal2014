@@ -41,6 +41,10 @@ sleep 1
 ./unload.py ds9 -port 5139 -title Mezcal
 ./unload.py xgterm -sbr -fn 9x15 -sl 400 -cr red -title IRAF_MEZCAL -e cl
 
+./unload.py /bin/csh -f /usr/local/instrumentacion/Mezcal2014/umezca/
+./unload.py /usr/local/bin/xgterm -geometry 80x25+10+10 -sb -sl 320 -bg black -fg white -fn 10x20 -T XGterm:   -n IRAF -e /usr/local/instrumentacion/Mezcal2014/umezcal
+./unload.py /usr/bin/wish -f /usr/share/saods9/library/ds9.tcl -fifo /home/observa/.devmarconi0/imt1o -title Mezcal
+
 echo "cargando nuevos parametros ........ "
 source /tmp/marconi.kk
 echo "END Mezcal ......................."
