@@ -7,6 +7,7 @@
 # V2.15 -E.Colorado,Sep-2016, cambio de signo en escala de placa con cambio de canal de lectura left
 # V2.20 -E.Colorado,Ago-2017, Hice cambio para que funcionara el roi 2 center con CCD Spectral2, arregle bug en pdf, bias en macro no era cero la ultima
 # V2.22 -E.Colorado,Ago-2018, Bugs reportados por M. richer arreglados
+# V2.23 -E.Colorado,Jun-2023, Bugs reportados por M. richer , compu nueva, gui delay se tardaba de mas
 
 import pygtk
 pygtk.require("2.0")
@@ -1455,6 +1456,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 ############################################################################
     def on_b_grating_clicked(self, widget, data=None):
         print "boton gratin presionado"
+	return
         dialog=gtk.Dialog(title="Move Gratin",parent=self.main_window,flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT)
         #,buttons=('Move',1)
         label=gtk.Label("Enter the position:")
@@ -2295,7 +2297,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
             #argumento da milisegundos
             s= int(arg[1])/1000
             print 'delay',s
-            self.delay_gui_safe(s)
+            self.delay_gui_safe(s,True)
         elif arg[0] == "slit":
             #numeros
             print 'slit'
@@ -2566,6 +2568,13 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
     def delay_gui_safe(self,segundos=1,p=False):
         if p: print 'delay_gui_safe',segundos,'segundos'
         if p: self.mi_ccd.mis_variables.mensajes('Waiting %d seconds to continue.....'%(segundos),LOG,'blue')
+
+        #2023
+        offset=0
+        if self.is_ccd_completed == False:
+            #es una exposicion
+            offset=15
+        t_ini=time.time()
         #esperar con ciclos de un f/segundo actualizanfo la gui
         for s in range(0,segundos*10):
             if self.stop:
@@ -2573,7 +2582,12 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
                     return
             #print 'en delay gui safe ',s, ' de ',segundos, ' 10/segundos'
             time.sleep(0.1)
+            t_now=time.time()
+            if t_now-t_ini >(segundos+offset):
+                print 'Ya paso el tiempo de espera '
+                break
             while gtk.events_pending(): gtk.main_iteration()
+        print 'realmente tarde =',t_now - t_ini
         if p: self.mi_ccd.mis_variables.mensajes('OK to continue.....',LOG,'blue')
 ############################################################################
     def espera_motores_mezcal(self):
