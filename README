@@ -1,3 +1,16 @@
+# Mezcal 2023, para PC sonaja 2023 con ubuntu 20.04 LTS
+
+# todo 2023
+- Verificar que en el subdirectorio bin esten las ligas correctas para usar el ds9 y xpa
+- Verificar script para arranque de IRAF
+
+# cambios 2023
+- sincronizado con github: https://github.com/baja2k9/Mezcal2014
+
+# Dependencias
+- Ocupa las librerias del guiador: /usr/local/instrumentacion/guiador2m_cliente
+
+## Notas antiguas
 ocupa liga de las librerias del oan_ccds
 ln -s ../oan_ccds/libs/ .
 
