@@ -15,7 +15,7 @@ def kill_process(process_name):
                 # Obtener el ID del proceso
                 process_info = line.split()
                 pid = process_info[1]
-
+                print ('process_name',process_name,pid)
                 # Matar el proceso
                 subprocess.call(["kill", pid])
                 print("Proceso {} terminado.".format(process_name))

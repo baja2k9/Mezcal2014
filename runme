@@ -25,6 +25,7 @@ echo "Mezcal Instrument Star Up scrip ............"
 #sleep 1
 ./xmezcalds9iraf >>/dev/null
 
+
 source /tmp/marconi.kk
 #para que levante ds9
 sleep 1
