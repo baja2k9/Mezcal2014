@@ -10,7 +10,7 @@ xrdb -merge /var/X11R6/lib/app-defaults/XGterm
         -bg black -fg white -fn 10x20 \
 	-T "XGterm:  " \
 	-n "IRAF" -e /usr/local/instrumentacion/Mezcal2014/umezcal &
-# /usr/local/bin/ds9 -fifo  /home/observa/.devmarconi0/imt1 -title MarconiOnly&
+ #/usr/local/bin/ds9 -fifo  /home/observa/.devmarconi0/imt1 -title MarconiOnly&
 echo "iraf+ds9"
 exit 0
 ###########################################################################

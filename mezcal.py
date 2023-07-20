@@ -2573,8 +2573,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         offset=0
         if self.is_ccd_completed == False:
             #es una exposicion
-            offset=15
-        t_ini=time.time()
+            offset=10
+        t_now=t_ini=time.time()
         #esperar con ciclos de un f/segundo actualizanfo la gui
         for s in range(0,segundos*10):
             if self.stop:
@@ -3053,7 +3053,7 @@ if __name__=="__main__":
     print "NoMezcal",NOMEZCAL
 
     DEBUG=True    #para algunos print del main
-    VERSION='2.22'
+    VERSION='2.23'
     LOG="nolog"
     colores="/usr/local/instrumentacion/Mezcal2014/./mis_colores.rc"
     gtk.rc_set_default_files(colores)
