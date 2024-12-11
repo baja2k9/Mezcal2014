@@ -1,5 +1,7 @@
 #!/bin/csh -f
-
+cd /home/observa/imagenes
+#bindkey ^H backward-delete-char
+stty erase ^H
 
 #/usr/bin/ds9 -fifo  /home/observa/.devmarconi0/imt1 -title MarconiOnly&
 /usr/bin/ds9 -fifo  /home/observa/.devmarconi0/imt1o  -title Mezcal&

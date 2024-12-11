@@ -2289,6 +2289,13 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
                 ethread = threading.Thread(target=self.on_expone_clicked,args = (None,2,'MEZ'))
                 ethread.start()
             #self.on_expone_clicked(None,2)
+        elif arg[0] == "wait_ccd":
+            #espera a que termine el ccd
+            while not self.is_ccd_completed:
+                if self.STOP_secuencia: break
+                if self.stop: break
+                self.delay_gui_safe(1)
+
         elif arg[0] == "tint":
             #argumento da milisegundos
             self.mi_ccd.etime = float(arg[1])/1000.0

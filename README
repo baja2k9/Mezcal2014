@@ -10,6 +10,10 @@
 # Dependencias
 - Ocupa las librerias del guiador: /usr/local/instrumentacion/guiador2m_cliente
 
+# Notas
+sync con spm dic 2024
+
+
 ## Notas antiguas
 ocupa liga de las librerias del oan_ccds
 ln -s ../oan_ccds/libs/ .
