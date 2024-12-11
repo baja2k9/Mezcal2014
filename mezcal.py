@@ -376,9 +376,9 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         self.e_step=builder.get_object("e_sec_step")
 
         #self.e_posa=builder.get_object("e_posa")
-        self.e_posl=builder.get_object("e_posl")
-        self.e_posl2=builder.get_object("e_posl2")
-        self.e_ppa = builder.get_object("e_pa")
+        self.e_posl=builder.get_object("e_posl") #rotator angle
+        self.e_posl2=builder.get_object("e_posl2") #PL
+        self.e_ppa = builder.get_object("e_pa")    #PA
 
 
         self.b_exec_sec=builder.get_object("b_exec_sec")
@@ -1322,7 +1322,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
             ok=False
 
         if ok:
-            self.e_posl.set_text(str(self.platina.angulo))
+            self.e_posl.set_text(str(self.platina.angulo)) #rotator angle
             self.e_posl2.set_text(str(self.platina.angulo))
     
             pa=self.platina.PL_2_PA(self.platina.angulo)
@@ -1956,7 +1956,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
     ############################################################################
     def on_b_roi2roi_clicked(self, widget, data=None):
         print "roi to roi"
-        pangulo=float(self.e_posl.get_text())
+        pangulo=float(self.e_posl.get_text())   #rotator angle
         print "Angulo de platina:",pangulo
         gra_rad=math.pi/180.0
 
