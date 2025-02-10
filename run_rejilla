@@ -1,0 +1,6 @@
+#! /bin/bash
+cd /usr/local/instrumentacion/Mezcal2014/
+echo "Mezcal Instrument Star Up scrip ............"
+
+wish pasos_rejilla.tcl
+
