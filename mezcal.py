@@ -1628,19 +1628,33 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         if self.stop == False:
             print "En Espera de podernos traernos los datos !!!!!!!!!!!!!!!"
             resp=self.mi_ccd.espera_estatus(tim)
-            if resp:
-                print "Ya podernos traernos los datos !!!!!!!!!!!!!!!"
-                self.mi_ccd.trae_binario()
-                if data=='fli_dark':
-                    print 'do display para fli ..........'
-                    self.do_display_flidark()
-                else:
-                    #print 'do display Normal  ..........'
-                    self.do_display()
-                self.post_expone()
-                self.upgrade_fits_mezcal()
+            
+            self.mi_ccd.trae_binario()
+            if data=='fli_dark':
+                print 'do display para fli ..........'
+                r=self.do_display_flidark()
             else:
-                print 'Me cancelaron durante exposicion'
+                #print 'do display Normal  ..........'
+                self.do_display()
+            self.post_expone()
+            self.upgrade_fits_mezcal()
+            
+
+
+
+            #if resp:
+            #    print "Ya podernos traernos los datos !!!!!!!!!!!!!!!"
+            #    self.mi_ccd.trae_binario()
+            #    if data=='fli_dark':
+            #        print 'do display para fli ..........'
+            #        self.do_display_flidark()
+            #    else:
+            #        #print 'do display Normal  ..........'
+            #        self.do_display()
+            #    self.post_expone()
+            #    self.upgrade_fits_mezcal()
+            #else:
+            #    print 'Me cancelaron durante exposicion'
 
         else:
             print "esta stop TRUE, me cancelaron xxxxxxxxxxxxxxxxxxxxxx"
