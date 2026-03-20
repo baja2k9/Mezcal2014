@@ -764,7 +764,6 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #clima
         self.mi_ccd.weather_enable=True
         #self.mi_ccd.server='132.248.4.66'
-        self.mueve_rejilla_new(1,1)
 
         #inicializar CCD
         self.mi_ccd.mis_variables.queue = self.queue
@@ -779,8 +778,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 
 
         ithread = threading.Thread(target=self.mi_ccd.inicializa)
-        #ithread.start()
-        #self.mi_ccd.inicializa()
+        ithread.start()
+
 
 
 
@@ -1504,8 +1503,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         hbox3 = gtk.HBox(True, 4)
         b_l3 = gtk.Button('<<<')
         b_r3 = gtk.Button('>>>')
-        b_l3.connect('clicked', lambda w: jog_rejilla(-5))
-        b_r3.connect('clicked', lambda w: jog_rejilla( 5))
+        b_l3.connect('clicked', lambda w: jog_rejilla(-3))
+        b_r3.connect('clicked', lambda w: jog_rejilla( 3))
         hbox3.pack_start(b_l3, True, True, 0)
         hbox3.pack_start(b_r3, True, True, 0)
         hbox3.show_all()
