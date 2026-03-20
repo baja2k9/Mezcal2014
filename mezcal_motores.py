@@ -274,8 +274,9 @@ class MEZCAL_MOTORES(CLIENTE,CONFIGURA):
         print "cmd=",cmd
         self.casi_manda_sin_respuesta(cmd)
 ###########################################################
-    def mueve_rejilla_new(self,dir,pos):
-        if dir ==1:
+    def mueve_rejilla_new(self,pos):
+
+        if pos >0:
             xdir=6
         else:
             xdir=7
