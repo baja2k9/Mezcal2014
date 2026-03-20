@@ -40,7 +40,7 @@ class MEZCAL_MOTORES(CLIENTE,CONFIGURA):
 
         #slit
         self.rendija=2
-        self.eje_rendija=2
+        self.eje_rendija=2  #eje2, slit
 
         self.wheel=1
         self.eje_wheel=1
@@ -49,6 +49,7 @@ class MEZCAL_MOTORES(CLIENTE,CONFIGURA):
         self.mirror=0
         self.slit=0
         self.grating=5
+        self.eje_grating=5 #eje5
         self.estado_lamp=-1;self.lamp=0
         self.lamp_txt='??'
         self.shutter='Closed'
@@ -270,6 +271,17 @@ class MEZCAL_MOTORES(CLIENTE,CONFIGURA):
 
 
         cmd=  ">:A%1d3%04d;"% (eje, npos)
+        print "cmd=",cmd
+        self.casi_manda_sin_respuesta(cmd)
+###########################################################
+    def mueve_rejilla_new(self,dir,pos):
+        if dir ==1:
+            xdir=6
+        else:
+            xdir=7
+
+        cmd=  ">:A5%1d%1d;"% (xdir, pos)
+        print "mueve_rejilla cmd=",cmd
         self.casi_manda_sin_respuesta(cmd)
 ###########################################################
     def mueve_lentes(self,pos):

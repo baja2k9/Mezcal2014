@@ -764,7 +764,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #clima
         self.mi_ccd.weather_enable=True
         #self.mi_ccd.server='132.248.4.66'
-
+        self.mueve_rejilla_new(1,1)
 
         #inicializar CCD
         self.mi_ccd.mis_variables.queue = self.queue
@@ -779,7 +779,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 
 
         ithread = threading.Thread(target=self.mi_ccd.inicializa)
-        ithread.start()
+        #ithread.start()
         #self.mi_ccd.inicializa()
 
 
@@ -1456,7 +1456,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 ############################################################################
     def on_b_grating_clicked(self, widget, data=None):
         print "boton gratin presionado"
-	return
+
         dialog=gtk.Dialog(title="Move Gratin",parent=self.main_window,flags=gtk.DIALOG_MODAL|gtk.DIALOG_DESTROY_WITH_PARENT)
         #,buttons=('Move',1)
         label=gtk.Label("Enter the position:")
@@ -3060,6 +3060,20 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         print 'CCD init again'
         self.mi_ccd.inicializa()
         self.update_ccd_gui()
+############################################################################
+    def on_init_slit_clicked(self,widget,data=None):
+        print 'init slit'
+        self.inicializa(self.eje_rendija)
+
+############################################################################
+    def on_init_filtro_clicked(self,widget,data=None):
+        print 'init filtro'
+        self.inicializa(self.eje_filtro)
+############################################################################
+    def on_init_grating_clicked(self,widget,data=None):
+        print 'init rendija'
+        self.inicializa(self.eje_grating)
+############################################################################
 ############################################################################
 #------------------------------------------------------------------------------
 if __name__=="__main__":
