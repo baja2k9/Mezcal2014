@@ -281,7 +281,7 @@ class MEZCAL_MOTORES(CLIENTE,CONFIGURA):
         else:
             xdir=7
 
-        cmd=  ">:A5%1d%1d;"% (xdir, pos)
+        cmd=  ">:A5%1d%1d;"% (xdir, abs(pos))
         print "mueve_rejilla cmd=",cmd
         self.casi_manda_sin_respuesta(cmd)
 ###########################################################
