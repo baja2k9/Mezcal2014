@@ -1428,7 +1428,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #poner valor
         e.set_text(valor)
 
-        dialog.add_button('Move',1)
+        dialog.add_button('Cancel', gtk.RESPONSE_CANCEL)
+        dialog.add_button('Move', 1)
         response = dialog.run()
         print "response",response
 
@@ -1472,7 +1473,46 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #poner valor
         e.set_text(valor)
 
-        dialog.add_button('Move',1)
+        def jog_rejilla(pos):
+            self.mueve_rejilla_new(pos)
+
+
+        label2=gtk.Label("Or move by steps:")
+        dialog.vbox.pack_start(label2,True,True,0)
+        label2.show()
+
+        hbox1 = gtk.HBox(True, 4)
+        b_l1 = gtk.Button('<')
+        b_r1 = gtk.Button('>')
+        b_l1.connect('clicked', lambda w: jog_rejilla(-1))
+        b_r1.connect('clicked', lambda w: jog_rejilla( 1))
+        hbox1.pack_start(b_l1, True, True, 0)
+        hbox1.pack_start(b_r1, True, True, 0)
+        hbox1.show_all()
+        dialog.vbox.pack_start(hbox1, True, True, 0)
+
+        hbox2 = gtk.HBox(True, 4)
+        b_l2 = gtk.Button('<<')
+        b_r2 = gtk.Button('>>')
+        b_l2.connect('clicked', lambda w: jog_rejilla(-2))
+        b_r2.connect('clicked', lambda w: jog_rejilla( 2))
+        hbox2.pack_start(b_l2, True, True, 0)
+        hbox2.pack_start(b_r2, True, True, 0)
+        hbox2.show_all()
+        dialog.vbox.pack_start(hbox2, True, True, 0)
+
+        hbox3 = gtk.HBox(True, 4)
+        b_l3 = gtk.Button('<<<')
+        b_r3 = gtk.Button('>>>')
+        b_l3.connect('clicked', lambda w: jog_rejilla(-5))
+        b_r3.connect('clicked', lambda w: jog_rejilla( 5))
+        hbox3.pack_start(b_l3, True, True, 0)
+        hbox3.pack_start(b_r3, True, True, 0)
+        hbox3.show_all()
+        dialog.vbox.pack_start(hbox3, True, True, 0)
+
+        dialog.add_button('Cancel', gtk.RESPONSE_CANCEL)
+        dialog.add_button('Move', 1)
         response = dialog.run()
         print "response",response
 
