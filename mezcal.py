@@ -780,6 +780,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         if not NOINIT:
             ithread = threading.Thread(target=self.mi_ccd.inicializa)
             ithread.start()
+        else:
+            ithread = None
 
 
 
@@ -792,8 +794,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #esperar thread de inicializacion
         print "************ Esperando Thread de Inicializacion *******************"
         #ithread.join()
-        #if ithread!=None and ithread.isAlive():
-        while  ithread.isAlive():
+        while ithread is not None and ithread.isAlive():
             while gtk.events_pending(): gtk.main_iteration()
             print "."
             time.sleep(0.1)
@@ -1483,7 +1484,11 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 
         hbox1 = gtk.HBox(True, 4)
         b_l1 = gtk.Button('<')
+        b_l1.get_child().set_markup('<b><span foreground="blue">&lt;</span></b>')
+
         b_r1 = gtk.Button('>')
+        b_r1.get_child().set_markup('<b><span foreground="red">&gt;</span></b>')
+
         b_l1.connect('clicked', lambda w: jog_rejilla(-1))
         b_r1.connect('clicked', lambda w: jog_rejilla( 1))
         hbox1.pack_start(b_l1, True, True, 0)
@@ -1493,7 +1498,11 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 
         hbox2 = gtk.HBox(True, 4)
         b_l2 = gtk.Button('<<')
+        b_l2.get_child().set_markup('<b><span foreground="blue">&lt;&lt;</span></b>')
+
         b_r2 = gtk.Button('>>')
+        b_r2.get_child().set_markup('<b><span foreground="red">&gt;&gt;</span></b>')
+
         b_l2.connect('clicked', lambda w: jog_rejilla(-2))
         b_r2.connect('clicked', lambda w: jog_rejilla( 2))
         hbox2.pack_start(b_l2, True, True, 0)
@@ -1503,7 +1512,11 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 
         hbox3 = gtk.HBox(True, 4)
         b_l3 = gtk.Button('<<<')
+        b_l3.get_child().set_markup('<b><span foreground="blue">&lt;&lt;&lt;</span></b>')
+
         b_r3 = gtk.Button('>>>')
+        b_r3.get_child().set_markup('<b><span foreground="red">&gt;&gt;&gt;</span></b>')
+
         b_l3.connect('clicked', lambda w: jog_rejilla(-3))
         b_r3.connect('clicked', lambda w: jog_rejilla( 3))
         hbox3.pack_start(b_l3, True, True, 0)
