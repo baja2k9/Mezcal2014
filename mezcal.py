@@ -777,8 +777,9 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         gobject.timeout_add(10,self.procesaMensaje)
 
 
-        ithread = threading.Thread(target=self.mi_ccd.inicializa)
-        ithread.start()
+        if not NOINIT:
+            ithread = threading.Thread(target=self.mi_ccd.inicializa)
+            ithread.start()
 
 
 
@@ -1519,6 +1520,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         print 'tengo=',d
         if response <0:
             print "destruyeron mi ventana"
+            return
 
         dialog.destroy()
         try:
@@ -3125,6 +3127,9 @@ if __name__=="__main__":
     else:
         NOMEZCAL=False
     print "NoMezcal",NOMEZCAL
+
+    NOINIT = '--noinit' in sys.argv
+    print "NoInit", NOINIT
 
     DEBUG=True    #para algunos print del main
     VERSION='2.23'
