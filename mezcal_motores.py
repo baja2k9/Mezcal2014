@@ -294,8 +294,8 @@ class MEZCAL_MOTORES(CLIENTE,CONFIGURA):
         self.casi_manda_sin_respuesta(cmd)
 ###########################################################
     def mueve_rejilla(self,pos):
-        if pos <-75: pos=-75
-        if pos >75: pos=75
+        if pos <-150: pos=-150
+        if pos >150: pos=150
 
         cmd= ">:A53%04X;"% (pos&0xFFFF)
         self.casi_manda_sin_respuesta(cmd)
