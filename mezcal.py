@@ -1607,7 +1607,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         elif self.imgtype=='zero':
             index=3
         self.idExp = self.lista_imagen[index][1]
-        #print "idExp",self.idExp
+        print "idExp",self.idExp
 
         #actualizar estado del shutter
         if self.imgtype=='zero' or self.imgtype=='dark':
@@ -3128,17 +3128,23 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         print 'init rendija'
         self.inicializa(self.eje_grating)
 ############################################################################
+    def on_b_image_clicked(self,widget,data=None):
+        print "presionaste el boton de imagen"
+        self.imgtype = 'image'
+
+        #mandar a eponer
+        self.on_expone_clicked('none',5)
+
+        self.imgtype = 'object'
 ############################################################################
 #------------------------------------------------------------------------------
 if __name__=="__main__":
 
     #leer opciones
     arg = string.join(sys.argv[1:])
-    print arg
-    if arg.find('nomezcal')==0:
-        NOMEZCAL=True
-    else:
-        NOMEZCAL=False
+    print 'argumentos de mezcal',arg
+
+    NOMEZCAL = '--nomezcal' in sys.argv
     print "NoMezcal",NOMEZCAL
 
     NOINIT = '--noinit' in sys.argv
