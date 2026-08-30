@@ -651,6 +651,9 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #verificar que CCD y cargar su clase
         print "estamos usando el ccd 7 por defaul, actual=",ccd
 
+        #valor por defecto del eje rotado; solo SPECTRAL lo pone en True
+        self.rotate_axis = False
+
         if ccd=="e2vm":
             print "activando ccd Marconi"
             self.mi_ccd=c_ccd_marconi.CCD_MARCONI()
