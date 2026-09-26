@@ -29,7 +29,8 @@ echo "Mezcal Instrument Star Up scrip ............"
 source /tmp/marconi.kk
 #para que levante ds9
 sleep 1
-./mezcal.py
+#salida a terminal y a log del dia; -u para no usar buffer en el pipe
+python -u ./mezcal.py 2>&1 | tee -a /imagenes/bitacora/mez_consola_$(date +%Y_%m_%d).log
 
 
 #limpiar todo

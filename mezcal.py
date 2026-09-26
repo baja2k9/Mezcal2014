@@ -2227,6 +2227,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         print "color=",Color
         '''
 
+        #copia a la terminal (y al log de consola) con la hora
+        print time.strftime('%H:%M:%S'), 'MSG:', msg
         #print "-------------------------------"
         self.tbuffer.insert_with_tags(self.tbuffer.get_end_iter(), msg+'\n', tag)
         #print "-------------------------------"
@@ -2516,7 +2518,10 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         check=self.move_guider_enable.get_active()
         auto=self.is_auto_guiding
 
-        if auto:
+        #si se va a mover la sonda hay que cancelar el guiado aunque no se
+        #haya activado desde Mezcal (p.ej. desde la interfaz del guiador),
+        #si no el autoguiador regresa el telescopio y pierde la estrella
+        if auto or check:
             print "Apagando Guiado"
             self.guiador.CAM.aborta_guiado()
 
@@ -2524,21 +2529,32 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         self.mueve_tel_DOS(offdec,offar)
 
         #guiador
+        guider_moved=False
         if check==True:
             self.mi_ccd.mis_variables.mensajes('Vamos a mover Guiador',LOG)
             dec=self.mi_ccd.mi_telescopio.dec_dec
             gra_rad=math.pi/180.0
-            self.mueve_guiador(offdec,offar*15.0*math.cos(dec*gra_rad))
+            guider_moved=self.mueve_guiador(offdec,offar*15.0*math.cos(dec*gra_rad))
 
         if auto:
-            print "Re_activando Guiado"
-            #x=self.caja_x*4
-            #y=self.caja_y*4
+            #no reactivar si la sonda debia moverse y no se movio (el guiado
+            #regresaria el telescopio) o si no hay caja de guiado valida
+            if check and not guider_moved:
+                self.stop_guiding_gui("Guider was not moved, guiding NOT reactivated")
+            elif self.caja_x < 0 or self.caja_y < 0:
+                self.stop_guiding_gui("No valid guide box, guiding NOT reactivated")
+            else:
+                print "Re_activando Guiado"
+                #x=self.caja_x*4
+                #y=self.caja_y*4
 
-            x=self.caja_x
-            y=self.caja_y
-            time.sleep(10)
-            self.guiador.CAM.activa_guiado(x,y)
+                x=self.caja_x
+                y=self.caja_y
+                time.sleep(10)
+                self.guiador.CAM.activa_guiado(x,y)
+        elif check:
+            m="Guiding was cancelled; if you were guiding, restart it"
+            self.mi_ccd.mis_variables.mensajes(m,LOG,Color='amarillo')
 
         print 'mueve tel smart DONE!'
 ############################################################################
@@ -3015,13 +3031,23 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
             m="Error reading guider position, guider NOT moved"
             self.mi_ccd.mis_variables.mensajes(m,LOG,Color='red')
             print m
-            return
+            return False
         self.guiador.info()
 
         ar=self.guiador.ar-offar
         dec=self.guiador.dec+offdec
 
         self.guiador.mueve(ar,dec)
+        return True
+
+############################################################################
+    def stop_guiding_gui(self,msg):
+        """Deja la GUI en estado de guiado cancelado y avisa al usuario"""
+        self.mi_ccd.mis_variables.mensajes(msg,LOG,Color='red')
+        print msg
+        self.is_auto_guiding=False
+        self.g_auto.set_label("Auto")
+        self.g_auto.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse("green"))
 
 ############################################################################
     def on_b_show_guider_clicked(self, widget, data=None ):
