@@ -2042,7 +2042,7 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         cx2,cy2,w2,h2,angulo2=self.ds9.roi(2)
         m="Traje de Ds9 box2=%d,%d,%d,%d"%(cx2,cy2,w2,h2)
         self.mi_ccd.mis_variables.mensajes(m,LOG)
-        if w <1:
+        if w2 <1:
             self.show_error("Roi Error, Choose Two Roi Box in Ds9!")
             return
 
@@ -3009,8 +3009,13 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         self.mi_ccd.mis_variables.mensajes(m,LOG,Color='blue')
         print m
 
-        #leer pos guiador
-        self.guiador.estado()
+        #leer pos guiador; si falla no mover, el movimiento es absoluto
+        #y con ar/dec viejos (o en 0) la sonda se iria a una posicion erronea
+        if self.guiador.estado() != 1:
+            m="Error reading guider position, guider NOT moved"
+            self.mi_ccd.mis_variables.mensajes(m,LOG,Color='red')
+            print m
+            return
         self.guiador.info()
 
         ar=self.guiador.ar-offar
