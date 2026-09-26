@@ -3,7 +3,7 @@
 # Habilitar acceso X11 local para Wayland/XWayland
 xhost +local: 2>/dev/null
 
-#docker pull fediazs91/fdiaz_oan_ccd:latest
+#docker pull baja2k9/oan_py2:18.04
 docker run  -u observa \
             --net=host \
             --env "DISPLAY" \
@@ -21,7 +21,7 @@ docker run  -u observa \
            -w /usr/local/instrumentacion/Mezcal2014 \
            --rm \
            -it \
-           colorado/oan_py2:18.04 \
+           baja2k9/oan_py2:18.04 \
            /bin/bash
 
 
