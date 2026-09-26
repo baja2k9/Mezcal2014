@@ -552,7 +552,10 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
         #cargar parametros anteriores del ambiente y los pone en el menu de seleccion
         self.do_default()
 
-        #configurar ds9,
+        #configurar ds9, esperando a que responda (maquina lenta)
+        #aqui todavia no existe mi_ccd, el aviso va solo a la terminal
+        if not self.ds9.wait_ready():
+            print "AVISO: DS9 no respondio, revisa DS9 y usa Restart Iraf & Ds9"
         self.ds9.loadfile('/home/observa/Colorado/Mezcal2014/mezcal_portada.fits')
 #------------------------------------------------------------------------------
     def on_b_exit_clicked(self, widget, data=None):
@@ -613,7 +616,8 @@ class MEZCAL(object,MEZCAL_MOTORES,BIN2FITS,BACKUP,GPLATINA):
 
         #configurar ds9,
         try:
-            self.ds9.do_init()
+            if self.ds9.wait_ready(timeout=10):
+                self.ds9.do_init()
         except:
             print 'No pude hcer init de ds9'
         os.system('beep')

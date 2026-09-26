@@ -11,6 +11,7 @@ import time
 #V1.5 agrege set_frame
 #V1.6 Voy a correr todo desde bin/ds9
 #V1.7 modificacioner para ubuntu 16.04 iraf direfente
+#V1.8 agregue wait_ready, espera a que ds9 responda por XPA
 ############################################################################
 class DS9:
     'manejo del ds9 con xpa access protocol'
@@ -73,6 +74,17 @@ class DS9:
                         angulo=float(a[4])
         #buscar en la lista
         return (cx,cy,w,h,angulo)
+############################################################################
+    def wait_ready(self, timeout=60):
+        """Espera a que ds9 responda por XPA; regresa True si esta listo"""
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+            rx = self.ejecuta("./bin/xpaaccess " + self.template)
+            if rx and str(rx).strip() == "yes":
+                return True
+            time.sleep(1)
+        print "ds9 (%s) no respondio en %d s" % (self.template, timeout)
+        return False
 ############################################################################
     def loadfile(self,archivo):
         cmd="./bin/xpaset "+"-p "+self.template+" file "+archivo
@@ -202,8 +214,10 @@ class DS9:
         rx=self.ejecuta(cmd)
         print rx
 
-        time.sleep(5)
-        self.do_init()
+        #dar tiempo a que el ds9 viejo desaparezca de XPA y esperar al nuevo
+        time.sleep(2)
+        if self.wait_ready():
+            self.do_init()
 
 ############################################################################
     def set_frame(self,frame):

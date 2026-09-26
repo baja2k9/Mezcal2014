@@ -27,7 +27,18 @@ echo "Mezcal Instrument Star Up scrip ............"
 
 
 source /tmp/marconi.kk
-#para que levante ds9
+#esperar a que ds9 responda por XPA (maquina lenta), maximo 90 s
+echo -n "Esperando DS9 "
+for i in $(seq 1 90); do
+    if [ "$(./bin/xpaaccess Mezcal 2>/dev/null)" = "yes" ]; then
+        echo " listo (${i}s)"
+        break
+    fi
+    echo -n "."
+    sleep 1
+done
+[ "$(./bin/xpaaccess Mezcal 2>/dev/null)" = "yes" ] || echo " AVISO: DS9 no respondio, Mezcal arranca sin configurarlo"
+#margen para que ds9 termine de inicializar tras registrarse en XPA
 sleep 1
 #salida a terminal y a log del dia; -u para no usar buffer en el pipe
 python -u ./mezcal.py 2>&1 | tee -a /imagenes/bitacora/mez_consola_$(date +%Y_%m_%d).log
